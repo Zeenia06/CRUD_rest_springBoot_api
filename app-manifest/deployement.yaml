@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment 
+metadata: 
+  name: spring-app-k8s
+  namespace: pgns
+spec: 
+  template:
+    metadata: 
+      name: spring-app-pod
+      labels: 
+        app: spring-app
+    spec: 
+      containers:
+      - name: spring-app
+        image: zeenia3/app:24
+        ports:
+          - containerPort: 8081
+        env:
+          - name: "MYSQL_ROOT_USER"
+            value: postgres
+            name: "MYSQL_ROOT_PASSWORD"
+            value: N55fz6h(9yHBCG1c
+            name: "DB_HOST"
+            value: postgres-cluster.pgns.svc.cluster.local:5432
+            name: "DB_name"
+            value: employees
+  replicas: 1
+  selector: 
+    matchLabels:
+      app: spring-app 
+
+---
+apiVersion: v1 
+kind: Service 
+metadata: 
+  name: spring-app-service 
+  namespace: pgns
+spec: 
+  type: NodePort 
+  ports: 
+    - protocol: "TCP"
+      targetPort: 8081
+      port: 8081 
+  selector: 
+    app: spring-app
